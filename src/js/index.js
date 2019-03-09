@@ -1,6 +1,7 @@
 import * as THREE from 'three'
-import * as bodyPix from '@tensorflow-models/body-pix';
+import * as posenet from '@tensorflow-models/posenet';
 const ballTexture = require('../textures/ball.jpg');
+const glove = require('../glove.png');
 
 
 const rainbow = [
@@ -31,7 +32,7 @@ const balls = [];
 
 async function loading() {
     document.getElementById('speed').innerHTML = `Loading Balls`;
-    // loadBall();
+    loadBalls();
     document.getElementById('speed').innerHTML = `Loading Your Camera`;
     await loadCamera();
     document.getElementById('speed').innerHTML = `Animating initial frame`;
@@ -66,6 +67,29 @@ function startGame() {
 
 function loadBalls() {
     balls.push(createBall());
+}
+
+function getBoundingBox(obj) {
+    var bbox = new THREE.Box3().setFromObject(obj);
+    var vectormin = new THREE.Vector3();
+    var vectormax = new THREE.Vector3();
+    var canvas = renderer.domElement;
+
+    vectormin.set(bbox.min.x, bbox.min.y, bbox.min.z);
+    vectormax.set(bbox.max.x, bbox.max.y, bbox.max.z);
+    // map to normalized device coordinate (NDC) space
+    vectormin.project(camera);
+    vectormax.project(camera);
+
+    // map to 2D screen space
+    [vectormin, vectormax].forEach(v => {
+        v.x = Math.round((v.x + 1) * canvas.width / 2);
+        v.y = Math.round((- v.y + 1) * canvas.height / 2);
+        v.z = 0;
+    })
+
+    console.log(vectormin, vectormax);
+    return [vectormin, vectormax];
 }
 
 const state = {
@@ -173,16 +197,19 @@ async function animate() {
         if (b.ballMesh.position.z < -50) {
             scene.remove(b.ballMesh);
         }
+
+        getBoundingBox(b.ballMesh);
         // b.ballMesh.rotation.z += b.rz;
     });
 
-    const partSegmentation = await state.net.estimatePartSegmentation(state.video, outputStride, segmentationThreshold);
-    const coloredPartImageData = bodyPix.toColoredPartImageData(
-        partSegmentation,
-        rainbow);
-    bodyPix.drawPixelatedMask(
-        canvas, state.video, coloredPartImageData, 0.9,
-        0, flipHorizontally, 3);
+    // const partSegmentation = await state.net.estimatePartSegmentation(state.video, outputStride, segmentationThreshold);
+    // const coloredPartImageData = bodyPix.toColoredPartImageData(
+    //     partSegmentation,
+    //     rainbow);
+    // bodyPix.drawPixelatedMask(
+    //     canvas, state.video, coloredPartImageData, 0.9,
+    //     0, flipHorizontally, 3);
+    // console.log(partSegmentation);
 
     // const personSegmentation = await state.net.estimatePersonSegmentation(
     //     state.video, outputStride,
