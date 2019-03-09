@@ -9,38 +9,49 @@ renderer.setSize( window.innerWidth, window.innerHeight );
 document.body.appendChild( renderer.domElement );
 
 var sphereGeometry = new THREE.SphereGeometry(1, 30, 30);
-
-// var cubeGeometry = new THREE.CubeGeometry( 1, 1, 1 );
-
-// Setting the ball texture
 var texture = new THREE.TextureLoader().load(ballTexture);
-// texture.wrapS = THREE.RepeatWrapping;
-// texture.wrapT = THREE.RepeatWrapping;
-// texture.repeat.set( 4, 4 );
-
 var material = new THREE.MeshBasicMaterial( { map: texture } );
-var obj = new THREE.Mesh( sphereGeometry, material );
-
-scene.add( obj );
 
 camera.position.z = 5;
 
-let gravity = 0.0001;
-let throwForce = 0.1;
-let vy = 0;
+const gravity = 0.0001;
+let defaultThrowForce = 0.1;
+
+let balls = [createBall()];
+
+function createBall() {
+    const ballMesh = new THREE.Mesh(sphereGeometry, material);
+    const ball = {ballMesh};
+    ball.vy = Math.random() * .2 - .1;
+    ball.vx = Math.random() * .2 - .1;
+    ball.rx = Math.random() * .1;
+    ball.ry = Math.random() * .1;
+    ball.rz = Math.random() * .1;
+    ball.throwForce = defaultThrowForce;
+    scene.add( ballMesh )
+    return ball;
+}
+
+const SLOW = 3000;
+const MED = 1000;
+const FAST = 300;
+setInterval(() => balls.push(createBall()), FAST);
 
 function animate() {
     // Rendering
 	requestAnimationFrame( animate );
     renderer.render( scene, camera );
 
-    // Gravitational Physics
-    vy += gravity;
+    // Ball Physics
+    balls.forEach(b => {
+        b.vy += gravity;
 
-    // Other forces
-    obj.position.z -= throwForce;
-    obj.position.y -= vy;
-    obj.rotation.x += 0.1;
-    obj.rotation.y += 0.1;
+        b.ballMesh.position.z -= b.throwForce;
+        b.ballMesh.position.y -= b.vy;
+        b.ballMesh.position.x -= b.vx;
+        b.ballMesh.rotation.x += b.rx;
+        b.ballMesh.rotation.y += b.ry;
+        // b.ballMesh.rotation.z += b.rz;
+    });
 }
 animate();
