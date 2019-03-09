@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "@tensorflow-models/body-pix": "^1.0.0",
+    "@tensorflow/tfjs": "^1.0.0",
+    "babel-polyfill": "^6.26.0",
+    "three": "^0.102.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3"
+  }
+}
