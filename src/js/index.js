@@ -160,6 +160,10 @@ async function animate() {
         b.ballMesh.position.x -= b.vx;
         b.ballMesh.rotation.x += b.rx;
         b.ballMesh.rotation.y += b.ry;
+
+        if (b.ballMesh.position.z < -50) {
+            scene.remove(b.ballMesh);
+        }
         // b.ballMesh.rotation.z += b.rz;
     });
 
