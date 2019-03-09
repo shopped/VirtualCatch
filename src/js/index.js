@@ -2,11 +2,21 @@ import * as THREE from 'three'
 import * as bodyPix from '@tensorflow-models/body-pix';
 const ballTexture = require('../textures/ball.jpg');
 
+
+const rainbow = [
+    [110, 64, 170], [143, 61, 178], [178, 60, 178], [210, 62, 167],
+    [238, 67, 149], [255, 78, 125], [255, 94, 99], [255, 115, 75],
+    [255, 140, 56], [239, 167, 47], [217, 194, 49], [194, 219, 64],
+    [175, 240, 91], [135, 245, 87], [96, 247, 96], [64, 243, 115],
+    [40, 234, 141], [28, 219, 169], [26, 199, 194], [33, 176, 213],
+    [47, 150, 224], [65, 125, 224], [84, 101, 214], [99, 81, 195]
+];
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
 const renderer = new THREE.WebGLRenderer({ alpha: true });
-renderer.setClearColor( 0x000000, 0 );
+renderer.setClearColor(0x000000, 0);
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
@@ -21,13 +31,13 @@ const balls = [];
 
 async function loading() {
     document.getElementById('speed').innerHTML = `Loading Balls`;
-    loadBalls();
+    // loadBall();
     document.getElementById('speed').innerHTML = `Loading Your Camera`;
     await loadCamera();
     document.getElementById('speed').innerHTML = `Animating initial frame`;
     animate();
     document.getElementById('speed').innerHTML = `Pitcher is ${textOptions[currentSpeedIndex]}`;
-    startGame();
+    // startGame();
 }
 
 function startGame() {
@@ -137,7 +147,6 @@ function resetBallInterval() {
 }
 
 const canvas = document.getElementById('canvas');
-console.log(canvas);
 const outputStride = 16; //8, 16, 32
 const segmentationThreshold = 0.5;
 const flipHorizontally = true;
@@ -146,9 +155,9 @@ var personSegmentation;
 async function animate() {
     // Rendering
     requestAnimationFrame(animate);
+    // const WebGLCanvas = Array.from(document.getElementsByTagName('canvas')).filter(c => c.id != 'canvas')[0];
     const ctx = canvas.getContext('2d');
-    console.log(canvas.width, canvas.height);
-    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     renderer.render(scene, camera);
 
     // Ball Physics
@@ -167,8 +176,22 @@ async function animate() {
         // b.ballMesh.rotation.z += b.rz;
     });
 
-    // const partSegmentation = await state.net.estimatePartSegmentation(state.video, outputStride, segmentationThreshold);
-    // console.log(partSegmentation);
+    const partSegmentation = await state.net.estimatePartSegmentation(state.video, outputStride, segmentationThreshold);
+    const coloredPartImageData = bodyPix.toColoredPartImageData(
+        partSegmentation,
+        rainbow);
+    bodyPix.drawPixelatedMask(
+        canvas, state.video, coloredPartImageData, 0.9,
+        0, flipHorizontally, 3);
+
+    // const personSegmentation = await state.net.estimatePersonSegmentation(
+    //     state.video, outputStride,
+    //     segmentationThreshold);
+    // const mask = bodyPix.toMaskImageData(
+    //     personSegmentation, false);
+    // bodyPix.drawMask(
+    //     canvas, state.video, mask, 0.5,
+    //     0.3, flipHorizontally);
 }
 
 loading();
