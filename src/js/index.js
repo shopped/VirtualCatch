@@ -1,8 +1,9 @@
 import * as THREE from 'three'
 import * as posenet from '@tensorflow-models/posenet';
 const ballTexture = require('../textures/ball.jpg');
-const glove = require('../glove.png');
-
+const glovePNG = require('../glove.png');
+const glove = new Image();
+glove.src = glovePNG;
 
 const rainbow = [
     [110, 64, 170], [143, 61, 178], [178, 60, 178], [210, 62, 167],
@@ -38,7 +39,7 @@ async function loading() {
     document.getElementById('speed').innerHTML = `Animating initial frame`;
     animate();
     document.getElementById('speed').innerHTML = `Pitcher is ${textOptions[currentSpeedIndex]}`;
-    // startGame();
+    startGame();
 }
 
 function startGame() {
@@ -88,7 +89,7 @@ function getBoundingBox(obj) {
         v.z = 0;
     })
 
-    console.log(vectormin, vectormax);
+    // console.log(vectormin, vectormax);
     return [vectormin, vectormax];
 }
 
@@ -99,19 +100,19 @@ const state = {
 }
 
 async function setUpCamera() {
+    const videoElement = document.getElementById('video');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         alert('Error getting access to your webcam webcam.');
     }
 
-    const videoElement = document.getElementById('video');
     const stream = await navigator.mediaDevices.getUserMedia(
-        { 'audio': false, 'video': true });
+        { 'audio': false, 'video': {width: window.innerWidth, height: window.innerHeight} });
     videoElement.srcObject = stream;
 
     return new Promise((resolve) => {
         videoElement.onloadedmetadata = () => {
-            videoElement.width = videoElement.videoWidth;
-            videoElement.height = videoElement.videoHeight;
+            videoElement.width = window.innerWidth;
+            videoElement.height = window.innerHeight;
             resolve(videoElement);
         }
     })
@@ -119,7 +120,7 @@ async function setUpCamera() {
 
 const mobileNetArchitecture = 0.75; // 0.5, 0.75, 1, ?1.01
 async function loadCamera() {
-    state.net = await bodyPix.load(mobileNetArchitecture);
+    state.net = await posenet.load(mobileNetArchitecture);
     try {
         state.video = await setUpCamera();
     } catch (e) {
@@ -127,7 +128,7 @@ async function loadCamera() {
         document.getElementById('speed').innerHTML = 'Error getting video!';
     }
     state.video.play();
-    personSegmentation = await state.net.estimatePersonSegmentation(state.video, outputStride, segmentationThreshold);
+    // personSegmentation = await state.net.estimatePersonSegmentation(state.video, outputStride, segmentationThreshold);
 }
 
 function createBall() {
@@ -176,13 +177,38 @@ const segmentationThreshold = 0.5;
 const flipHorizontally = true;
 var personSegmentation;
 
+document.getElementById('video').style.width = window.innerWidth;
+document.getElementById('video').style.height = window.innerHeight;
+document.getElementById('canvas').style.width = window.innerWidth;
+document.getElementById('canvas').width = window.innerWidth;
+document.getElementById('canvas').style.height = window.innerHeight;
+document.getElementById('canvas').height = window.innerHeight;
+
 async function animate() {
     // Rendering
-    requestAnimationFrame(animate);
-    // const WebGLCanvas = Array.from(document.getElementsByTagName('canvas')).filter(c => c.id != 'canvas')[0];
     const ctx = canvas.getContext('2d');
-    // ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    // const vid = document.getElementById('video');
+    ctx.save();
+    ctx.scale(-1, 1);
+    // ctx.translate(-window.innerWidth, 0);
+    ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
+    ctx.restore();
+
+
+    const pose = await state.net.estimateSinglePose(state.video, 0.5, flipHorizontally, outputStride);
+    if (pose) {
+        // console.log(pose);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
+        let boundingBoxOneMinX = pose.keypoints[9].position.x;
+        ctx.drawImage(glove, pose.keypoints[9].position.x, pose.keypoints[9].position.y, distanceConstant, distanceConstant);
+        ctx.drawImage(glove, pose.keypoints[10].position.x, pose.keypoints[11].position.y, distanceConstant, distanceConstant);
+    }
+
+    requestAnimationFrame(animate);
     renderer.render(scene, camera);
+
+
 
     // Ball Physics
     balls.forEach(b => {
@@ -194,31 +220,19 @@ async function animate() {
         b.ballMesh.rotation.x += b.rx;
         b.ballMesh.rotation.y += b.ry;
 
-        if (b.ballMesh.position.z < -50) {
+        if (b.ballMesh.position.z < -30) {
             scene.remove(b.ballMesh);
         }
 
-        getBoundingBox(b.ballMesh);
+        // getBoundingBox(b.ballMesh);
         // b.ballMesh.rotation.z += b.rz;
     });
 
-    // const partSegmentation = await state.net.estimatePartSegmentation(state.video, outputStride, segmentationThreshold);
-    // const coloredPartImageData = bodyPix.toColoredPartImageData(
-    //     partSegmentation,
-    //     rainbow);
-    // bodyPix.drawPixelatedMask(
-    //     canvas, state.video, coloredPartImageData, 0.9,
-    //     0, flipHorizontally, 3);
-    // console.log(partSegmentation);
 
-    // const personSegmentation = await state.net.estimatePersonSegmentation(
-    //     state.video, outputStride,
-    //     segmentationThreshold);
-    // const mask = bodyPix.toMaskImageData(
-    //     personSegmentation, false);
-    // bodyPix.drawMask(
-    //     canvas, state.video, mask, 0.5,
-    //     0.3, flipHorizontally);
+}
+
+function distance(k1, k2) {
+    return Math.sqrt(Math.pow(k1.position.x - k2.position.x, 2) + Math.pow(k1.position.y - k2.position.y, 2))
 }
 
 loading();
