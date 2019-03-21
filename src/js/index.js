@@ -187,8 +187,8 @@ document.getElementById('canvas').height = window.innerHeight;
 async function animate() {
     // Rendering
     const ctx = canvas.getContext('2d');
-const theflash = document.getElementById('theflash');
-// const vid = document.getElementById('video');
+    const theflash = document.getElementById('theflash');
+    // const vid = document.getElementById('video');
     // ctx.save();
     // ctx.scale(-1, 1);
     // ctx.translate(-window.innerWidth, 0);
@@ -199,14 +199,21 @@ const theflash = document.getElementById('theflash');
     var handBBl = null;
     var handBBr = null;
     if (pose) {
-        // console.log(pose);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
-        handBBl = { min: { x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2) }, max: { x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2) } };
-        handBBr = { min: { x: pose.keypoints[10].position.x - (distanceConstant / 2), y: pose.keypoints[10].position.y - (distanceConstant / 2) }, max: { x: pose.keypoints[10].position.x + (distanceConstant / 2), y: pose.keypoints[10].position.y + (distanceConstant / 2) } };
         ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
-        ctx.drawImage(glove, pose.keypoints[9].position.x - distanceConstant, pose.keypoints[9].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
-        ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
+        if (pose.keypoints[9].confidence < .5) {
+            handBBl = null;
+        } else {
+            handBBl = { min: { x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2) }, max: { x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2) } };
+            ctx.drawImage(glove, pose.keypoints[9].position.x - distanceConstant, pose.keypoints[9].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
+        }
+        if (pose.keypoints[10].confidence < .5) {
+            handBBr = null;
+        } else {
+            handBBr = { min: { x: pose.keypoints[10].position.x - (distanceConstant / 2), y: pose.keypoints[10].position.y - (distanceConstant / 2) }, max: { x: pose.keypoints[10].position.x + (distanceConstant / 2), y: pose.keypoints[10].position.y + (distanceConstant / 2) } };
+            ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
+        }
     }
 
 
@@ -235,13 +242,13 @@ const theflash = document.getElementById('theflash');
             ) {
                 points++;
                 document.getElementById('score').innerHTML = points;
-                if (currentSpeedIndex <4) {
+                if (currentSpeedIndex < 4) {
                     theflash.className = 'good';
                 }
             } else {
                 points--;
                 document.getElementById('score').innerHTML = points;
-                if (currentSpeedIndex <4) {
+                if (currentSpeedIndex < 4) {
                     theflash.className = 'bad';
                 }
             }
