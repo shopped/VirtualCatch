@@ -28,7 +28,7 @@ var material = new THREE.MeshBasicMaterial({ map: texture });
 camera.position.z = 5;
 
 const gravity = 0.0001;
-const defaultThrowForce = 0.1;
+const defaultThrowForce = 0.2;
 const balls = [];
 
 async function loading() {
@@ -188,22 +188,24 @@ async function animate() {
     // Rendering
     const ctx = canvas.getContext('2d');
     // const vid = document.getElementById('video');
-    ctx.save();
-    ctx.scale(-1, 1);
+    // ctx.save();
+    // ctx.scale(-1, 1);
     // ctx.translate(-window.innerWidth, 0);
-    ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
-    ctx.restore();
+    // ctx.restore();
 
 
-    const pose = await state.net.estimateSinglePose(state.video, 0.5, flipHorizontally, outputStride);
+    const pose = await state.net.estimateSinglePose(state.video, 0.5, false, outputStride);
+    var handBB = null;
     if (pose) {
         // console.log(pose);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
-        let boundingBoxOneMinX = pose.keypoints[9].position.x;
-        ctx.drawImage(glove, pose.keypoints[9].position.x, pose.keypoints[9].position.y, distanceConstant, distanceConstant);
-        ctx.drawImage(glove, pose.keypoints[10].position.x, pose.keypoints[11].position.y, distanceConstant, distanceConstant);
+        let handBB = {min: {x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2)}, max: {x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2)}};
+        ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
+        ctx.drawImage(glove, pose.keypoints[9].position.x - distanceConstant, pose.keypoints[9].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
+        // ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
     }
+
 
     requestAnimationFrame(animate);
     renderer.render(scene, camera);
@@ -211,7 +213,7 @@ async function animate() {
 
 
     // Ball Physics
-    balls.forEach(b => {
+    balls.forEach((b, index) => {
         b.vy += gravity;
 
         b.ballMesh.position.z -= b.throwForce;
@@ -220,15 +222,29 @@ async function animate() {
         b.ballMesh.rotation.x += b.rx;
         b.ballMesh.rotation.y += b.ry;
 
+        // if (b.ballMesh.position.z < -5) {
         if (b.ballMesh.position.z < -30) {
+            if (handBB && detectCollision(getBoundingBox(b.ballMesh), handBB)) {
+                points++;
+                document.getElementById('score').innerHTML = points;
+            } else {
+                points--;
+                document.getElementById('score').innerHTML = points;
+            }
             scene.remove(b.ballMesh);
+            balls.splice(index, 1)
         }
 
-        // getBoundingBox(b.ballMesh);
         // b.ballMesh.rotation.z += b.rz;
     });
 
 
+}
+
+var points = 0;
+
+function detectCollision(a, b) {
+    console.log(a[0], a[1], b);
 }
 
 function distance(k1, k2) {
