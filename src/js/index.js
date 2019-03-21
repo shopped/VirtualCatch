@@ -195,15 +195,17 @@ async function animate() {
 
 
     const pose = await state.net.estimateSinglePose(state.video, 0.5, false, outputStride);
-    var handBB = null;
+    var handBBl = null;
+    var handBBr = null;
     if (pose) {
         // console.log(pose);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
-        let handBB = {min: {x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2)}, max: {x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2)}};
+        handBBl = {min: {x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2)}, max: {x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2)}};
+        handBBr = {min: {x: pose.keypoints[10].position.x - (distanceConstant / 2), y: pose.keypoints[10].position.y - (distanceConstant / 2)}, max: {x: pose.keypoints[10].position.x + (distanceConstant / 2), y: pose.keypoints[10].position.y + (distanceConstant / 2)}};
         ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
         ctx.drawImage(glove, pose.keypoints[9].position.x - distanceConstant, pose.keypoints[9].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
-        // ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
+        ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
     }
 
 
@@ -224,7 +226,11 @@ async function animate() {
 
         // if (b.ballMesh.position.z < -5) {
         if (b.ballMesh.position.z < -30) {
-            if (handBB && detectCollision(getBoundingBox(b.ballMesh), handBB)) {
+            if (
+                (handBBl && detectCollision(getBoundingBox(b.ballMesh), handBBl))
+                ||
+                (handBBr && detectCollision(getBoundingBox(b.ballMesh), handBBr))
+                ) {
                 points++;
                 document.getElementById('score').innerHTML = points;
             } else {
@@ -245,6 +251,35 @@ var points = 0;
 
 function detectCollision(a, b) {
     console.log(a[0], a[1], b);
+    if (
+        (a[0].x > b.min.x && a[0].x < b.max.x)
+        &&
+        (a[0].y > b.min.y && a[0].y < b.max.y)
+    ) {
+        return true;
+    }
+    if (
+        (a[1].x > b.min.x && a[1].x < b.max.x)
+        &&
+        (a[1].y > b.min.y && a[1].y < b.max.y)
+    ) {
+        return true;
+    }
+    if (
+        (a[0].x > b.min.x && a[0].x < b.max.x)
+        &&
+        (a[1].y > b.min.y && a[1].y < b.max.y)
+    ) {
+        return true;
+    }
+    if (
+        (a[1].x > b.min.x && a[1].x < b.max.x)
+        &&
+        (a[0].y > b.min.y && a[0].y < b.max.y)
+    ) {
+        return true;
+    }
+    return false;
 }
 
 function distance(k1, k2) {
