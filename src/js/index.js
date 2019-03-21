@@ -87,6 +87,9 @@ function getBoundingBox(obj) {
         v.x = Math.round((v.x + 1) * canvas.width / 2);
         v.y = Math.round((- v.y + 1) * canvas.height / 2);
         v.z = 0;
+
+        // mirror logie
+        v.x = canvas.width - v.x;
     })
 
     // console.log(vectormin, vectormax);
@@ -184,9 +187,16 @@ document.getElementById('canvas').width = window.innerWidth;
 document.getElementById('canvas').style.height = window.innerHeight;
 document.getElementById('canvas').height = window.innerHeight;
 
+let flipped = false;
+
 async function animate() {
     // Rendering
     const ctx = canvas.getContext('2d');
+    if (!flipped) {
+        ctx.translate(window.innerWidth, 0);
+        ctx.scale(-1, 1);
+        flipped = true;
+    }
     const theflash = document.getElementById('theflash');
     // const vid = document.getElementById('video');
     // ctx.save();
@@ -215,12 +225,6 @@ async function animate() {
             ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
         }
     }
-
-
-    requestAnimationFrame(animate);
-    renderer.render(scene, camera);
-
-
 
     // Ball Physics
     balls.forEach((b, index) => {
@@ -259,7 +263,8 @@ async function animate() {
         // b.ballMesh.rotation.z += b.rz;
     });
 
-
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
 }
 
 var points = 0;
