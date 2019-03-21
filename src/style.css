@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+@keyframes good {
+    from {
+        background-color: green;
+        opacity: 1;
+    }
+    to {
+        background-color: green;
+        opacity: 0;
+    }
+}
+
+@keyframes bad {
+    from {
+        background-color: red;
+        opacity: 1;
+    }
+    to {
+        background-color: red;
+        opacity: 0;
+    }
+}
+
+.good {
+    animation: good;
+    animation-duration: 1s;
+}
+
+.bad {
+    animation: bad;
+    animation-duration: 1s;
+}
+
+#theflash {
+    position: absolute;
+    display:flex;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    opacity: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+}

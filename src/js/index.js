@@ -106,7 +106,7 @@ async function setUpCamera() {
     }
 
     const stream = await navigator.mediaDevices.getUserMedia(
-        { 'audio': false, 'video': {width: window.innerWidth, height: window.innerHeight} });
+        { 'audio': false, 'video': { width: window.innerWidth, height: window.innerHeight } });
     videoElement.srcObject = stream;
 
     return new Promise((resolve) => {
@@ -144,13 +144,13 @@ function createBall() {
     return ball;
 }
 
-const vvSLOW = 5000;
-const vSLOW = 4000;
-const SLOW = 3000;
-const MED = 1000;
-const FAST = 300;
-const xFAST = 200;
-const xxFAST = 100;
+const vvSLOW = 6000;
+const vSLOW = 5000;
+const SLOW = 4000;
+const MED = 1500;
+const FAST = 500;
+const xFAST = 300;
+const xxFAST = 150;
 const speeds = [vvSLOW, vSLOW, SLOW, MED, FAST, xFAST, xxFAST];
 const textOptions = {
     0: 'very very slow',
@@ -187,7 +187,8 @@ document.getElementById('canvas').height = window.innerHeight;
 async function animate() {
     // Rendering
     const ctx = canvas.getContext('2d');
-    // const vid = document.getElementById('video');
+const theflash = document.getElementById('theflash');
+// const vid = document.getElementById('video');
     // ctx.save();
     // ctx.scale(-1, 1);
     // ctx.translate(-window.innerWidth, 0);
@@ -201,8 +202,8 @@ async function animate() {
         // console.log(pose);
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
-        handBBl = {min: {x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2)}, max: {x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2)}};
-        handBBr = {min: {x: pose.keypoints[10].position.x - (distanceConstant / 2), y: pose.keypoints[10].position.y - (distanceConstant / 2)}, max: {x: pose.keypoints[10].position.x + (distanceConstant / 2), y: pose.keypoints[10].position.y + (distanceConstant / 2)}};
+        handBBl = { min: { x: pose.keypoints[9].position.x - (distanceConstant / 2), y: pose.keypoints[9].position.y - (distanceConstant / 2) }, max: { x: pose.keypoints[9].position.x + (distanceConstant / 2), y: pose.keypoints[9].position.y + (distanceConstant / 2) } };
+        handBBr = { min: { x: pose.keypoints[10].position.x - (distanceConstant / 2), y: pose.keypoints[10].position.y - (distanceConstant / 2) }, max: { x: pose.keypoints[10].position.x + (distanceConstant / 2), y: pose.keypoints[10].position.y + (distanceConstant / 2) } };
         ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
         ctx.drawImage(glove, pose.keypoints[9].position.x - distanceConstant, pose.keypoints[9].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
         ctx.drawImage(glove, pose.keypoints[10].position.x - distanceConstant, pose.keypoints[10].position.y - distanceConstant, distanceConstant * 2, distanceConstant * 2);
@@ -224,18 +225,25 @@ async function animate() {
         b.ballMesh.rotation.x += b.rx;
         b.ballMesh.rotation.y += b.ry;
 
-        // if (b.ballMesh.position.z < -5) {
-        if (b.ballMesh.position.z < -30) {
+        if (b.ballMesh.position.z < -20) {
+            theflash.className = '';
+            void theflash.offsetWidth;
             if (
                 (handBBl && detectCollision(getBoundingBox(b.ballMesh), handBBl))
                 ||
                 (handBBr && detectCollision(getBoundingBox(b.ballMesh), handBBr))
-                ) {
+            ) {
                 points++;
                 document.getElementById('score').innerHTML = points;
+                if (currentSpeedIndex <4) {
+                    theflash.className = 'good';
+                }
             } else {
                 points--;
                 document.getElementById('score').innerHTML = points;
+                if (currentSpeedIndex <4) {
+                    theflash.className = 'bad';
+                }
             }
             scene.remove(b.ballMesh);
             balls.splice(index, 1)
