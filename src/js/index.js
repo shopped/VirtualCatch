@@ -63,6 +63,14 @@ function startGame() {
                 resetBallInterval();
             }
         }
+
+        if (keyName == 'ArrowRight') {
+            toggleFullScreen();
+        }
+
+        if (keyName == 'ArrowLeft') {
+            toggleFullScreen();
+        }
     }, false);
 }
 
@@ -305,5 +313,20 @@ function detectCollision(a, b) {
 function distance(k1, k2) {
     return Math.sqrt(Math.pow(k1.position.x - k2.position.x, 2) + Math.pow(k1.position.y - k2.position.y, 2))
 }
+
+function toggleFullScreen() {
+    var doc = window.document;
+    var docEl = doc.documentElement;
+  
+    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+  
+    if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+      requestFullScreen.call(docEl);
+    }
+    else {
+      cancelFullScreen.call(doc);
+    }
+  }
 
 loading();
