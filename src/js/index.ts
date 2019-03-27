@@ -44,7 +44,7 @@ async function loading() {
     window.setTimeout(() => startGame(), gameDelay);
 }
 
-function startGame() {
+function startGame(): void {
     currentInterval = window.setInterval(() => balls.push(createBall()), currentSpeed);
     // Changing Speeds via Keys
     document.addEventListener('keydown', (event) => {
@@ -76,11 +76,11 @@ function startGame() {
     }, false);
 }
 
-function loadBalls() {
+function loadBalls(): void {
     balls.push(createBall());
 }
 
-function getBoundingBox(obj) {
+function getBoundingBox(obj): number[] {
     var bbox = new THREE.Box3().setFromObject(obj);
     var vectormin = new THREE.Vector3();
     var vectormax = new THREE.Vector3();
@@ -190,7 +190,7 @@ let currentSpeedIndex = 3;
 let currentSpeed = speeds[currentSpeedIndex];
 let currentInterval = null;
 
-function resetBallInterval() {
+function resetBallInterval(): void {
     window.clearInterval(currentInterval);
     currentInterval = window.setInterval(() => balls.push(createBall()), currentSpeed);
     document.getElementById('speed').innerHTML = `Pitcher is ${textOptions[currentSpeedIndex]}`;
@@ -291,7 +291,7 @@ async function animate() {
 
 var points = 0;
 
-function detectCollision(a, b) {
+function detectCollision(a, b): boolean {
     console.log(a[0], a[1], b);
     if (
         (a[0].x > b.min.x && a[0].x < b.max.x)
@@ -324,11 +324,11 @@ function detectCollision(a, b) {
     return false;
 }
 
-function distance(k1, k2) {
+function distance(k1, k2): number {
     return Math.sqrt(Math.pow(k1.position.x - k2.position.x, 2) + Math.pow(k1.position.y - k2.position.y, 2))
 }
 
-function toggleFullScreen() {
+function toggleFullScreen(): void {
     var doc = window.document;
     var docEl = doc.documentElement;
 
