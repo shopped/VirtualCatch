@@ -1,19 +1,19 @@
-#Hello Developers!
+# Hello Developers!
 
 I am working on this application because I really like making applications that get people to exercise. As a developer I work on things that are not always obviously morally good. Improving public health by making a **free application available on the web** for anyone without any special equipment besides a webcam. Feel free to reach out or submit a pull request if you want to contribute. You can also reach out to me and send me a message!
 
 
-#Technologies Used
+# Technologies Used
 * Tensorflow.js
 * Three.js
 * TypeScript
 * Parcel Bundler
 
-#Current Features
+# Current Features
 * Different Pitching Speeds (Up/Down arrow key)
 * Detect collisions with both hands
 
-#Future Features
+# Future Features
 * Gloves rotate with your hands
 * Multiplayer Catch 
 * Pitching area fits full screen
