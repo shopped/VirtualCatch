@@ -1,7 +1,9 @@
 # Hello Developers!
 
-I am working on this application because I really like making applications that get people to exercise. As a developer I work on things that are not always obviously morally good. Improving public health by making a **free application available on the web** for anyone without any special equipment besides a webcam is good. Feel free to reach out or submit a pull request if you want to contribute. You can also reach out to me and send me a message!
+I am working on this application because I want to make applications that incentivize exercise. As a developer I work on things that are not always obviously morally good. Improving public health through exercise by making a **free application available on the web** for anyone without any special equipment besides a webcam. Feel free to reach out or submit a pull request if you want to contribute.
 
+![Screenshot Here](https://i.imgur.com/D3YSt4w.jpg "Screenshot. More in the video linked.")
+[Watch a video demo](https://youtu.be/K-d9zZWKDz0)
 
 # Technologies Used
 * Tensorflow.js
