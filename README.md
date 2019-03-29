@@ -12,13 +12,15 @@ I am working on this application because I really like making applications that 
 # Current Features
 * Different Pitching Speeds (Up/Down arrow key)
 * Detect collisions with both hands
+* BETA: Fullscreen Left/Right arrow key. Have to solve resizing for this to work
 
 # Future Features
 * Gloves rotate with your hands
 * Multiplayer Catch
+* Implement Resizing
 * Pitching area fits full screen
 * Curve balls and fast balls
-* Gloves rotate with your handsGet fullscreen to work (Left/Right arrow key. It throws off the ratio)
+* Get fullscreen to work (Left/Right arrow key. It throws off the ratio)
 * Don't just detect hand collisions, detect body collisions
 * Calculate distance from Camera for true 3d catch detection
 * Performance optimizations for lower power machines
