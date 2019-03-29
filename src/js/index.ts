@@ -6,15 +6,6 @@ const glovePNG = require('../glove.png');
 const glove = new Image();
 glove.src = glovePNG;
 
-const rainbow = [
-    [110, 64, 170], [143, 61, 178], [178, 60, 178], [210, 62, 167],
-    [238, 67, 149], [255, 78, 125], [255, 94, 99], [255, 115, 75],
-    [255, 140, 56], [239, 167, 47], [217, 194, 49], [194, 219, 64],
-    [175, 240, 91], [135, 245, 87], [96, 247, 96], [64, 243, 115],
-    [40, 234, 141], [28, 219, 169], [26, 199, 194], [33, 176, 213],
-    [47, 150, 224], [65, 125, 224], [84, 101, 214], [99, 81, 195]
-];
-
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
@@ -34,8 +25,6 @@ const balls = [];
 const gameDelay = 5000;
 
 async function loading() {
-    document.getElementById('speed').innerHTML = `Loading Balls`;
-    // loadBalls();
     document.getElementById('speed').innerHTML = `Loading Your Camera`;
     await loadCamera();
     document.getElementById('speed').innerHTML = `Animating initial frame`;
@@ -57,7 +46,6 @@ function startGame(): void {
                 resetBallInterval();
             }
         }
-
         if (keyName == 'ArrowDown') {
             if (currentSpeedIndex > 0) {
                 currentSpeedIndex--;
@@ -65,7 +53,6 @@ function startGame(): void {
                 resetBallInterval();
             }
         }
-
         if (keyName == 'ArrowRight') {
             toggleFullScreen();
         }
@@ -97,12 +84,9 @@ function getBoundingBox(obj): number[] {
         v.x = Math.round((v.x + 1) * canvas.width / 2);
         v.y = Math.round((- v.y + 1) * canvas.height / 2);
         v.z = 0;
-
-        // mirror logie
+        // mirror logic
         v.x = canvas.width - v.x;
     })
-
-    // console.log(vectormin, vectormax);
     return [vectormin, vectormax];
 }
 
@@ -198,9 +182,6 @@ function resetBallInterval(): void {
 
 const canvas = document.getElementById('canvas');
 const outputStride = 16; //8, 16, 32
-const segmentationThreshold = 0.5;
-const flipHorizontally = true;
-var personSegmentation;
 
 document.getElementById('video').style.width = window.innerWidth;
 document.getElementById('video').style.height = window.innerHeight;
@@ -220,12 +201,6 @@ async function animate() {
         flipped = true;
     }
     const theflash = document.getElementById('theflash');
-    // const vid = document.getElementById('video');
-    // ctx.save();
-    // ctx.scale(-1, 1);
-    // ctx.translate(-window.innerWidth, 0);
-    // ctx.restore();
-
 
     const pose = await state.net.estimateSinglePose(state.video, 0.5, false, outputStride);
     var handBBl = null;

@@ -1,6 +1,6 @@
 # Hello Developers!
 
-I am working on this application because I really like making applications that get people to exercise. As a developer I work on things that are not always obviously morally good. Improving public health by making a **free application available on the web** for anyone without any special equipment besides a webcam. Feel free to reach out or submit a pull request if you want to contribute. You can also reach out to me and send me a message!
+I am working on this application because I really like making applications that get people to exercise. As a developer I work on things that are not always obviously morally good. Improving public health by making a **free application available on the web** for anyone without any special equipment besides a webcam is good. Feel free to reach out or submit a pull request if you want to contribute. You can also reach out to me and send me a message!
 
 
 # Technologies Used
@@ -15,7 +15,7 @@ I am working on this application because I really like making applications that 
 
 # Future Features
 * Gloves rotate with your hands
-* Multiplayer Catch 
+* Multiplayer Catch
 * Pitching area fits full screen
 * Curve balls and fast balls
 * Gloves rotate with your handsGet fullscreen to work (Left/Right arrow key. It throws off the ratio)
@@ -24,7 +24,7 @@ I am working on this application because I really like making applications that 
 * Performance optimizations for lower power machines
 
 # Compatability
-I am developing on a 2015 15 inch MBP and know it works in chrome. Would be nice for people to check it on different devices and platforms
+I am developing on a 2015 15 inch MBP and know it works in Chrome. Would be nice for people to check it on different devices and platforms
 
 | OS      | Chrome | Safari | Firefox | Edge |
 |---------|--------|--------|---------|------|
