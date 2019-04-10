@@ -37,7 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 var THREE = require("three");
 var posenet = require("@tensorflow-models/posenet");
-var ballTexture = require('../textures/ball.jpg');
+var ballTexture = require('../ball.jpg');
 var glovePNG = require('../glove.png');
 var glove = new Image();
 glove.src = glovePNG;
@@ -226,12 +226,14 @@ function resetBallInterval() {
 }
 var canvas = document.getElementById('canvas');
 var outputStride = 16; //8, 16, 32
-document.getElementById('video').style.width = window.innerWidth;
-document.getElementById('video').style.height = window.innerHeight;
-document.getElementById('canvas').style.width = window.innerWidth;
-document.getElementById('canvas').width = window.innerWidth;
-document.getElementById('canvas').style.height = window.innerHeight;
-document.getElementById('canvas').height = window.innerHeight;
+document.getElementById('video').style.width = window.innerWidth.toString();
+document.getElementById('video').style.height = window.innerHeight.toString();
+document.getElementById('canvas').style.width = window.innerWidth.toString();
+// @ts-ignore
+document.getElementById('canvas').width = window.innerWidth.toString();
+document.getElementById('canvas').style.height = window.innerHeight.toString();
+// @ts-ignore
+document.getElementById('canvas').height = window.innerHeight.toString();
 var flipped = false;
 function animate() {
     return __awaiter(this, void 0, void 0, function () {
@@ -254,6 +256,7 @@ function animate() {
                     if (pose) {
                         ctx.clearRect(0, 0, canvas.width, canvas.height);
                         distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
+                        // @ts-ignore
                         ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
                         if (pose.keypoints[9].confidence < .5) {
                             handBBl = null;
@@ -285,14 +288,14 @@ function animate() {
                                 ||
                                     (handBBr && detectCollision(getBoundingBox(b.ballMesh), handBBr))) {
                                 points++;
-                                document.getElementById('score').innerHTML = points;
+                                document.getElementById('score').innerHTML = points.toString();
                                 if (currentSpeedIndex < 4) {
                                     theflash.className = 'good';
                                 }
                             }
                             else {
                                 points--;
-                                document.getElementById('score').innerHTML = points;
+                                document.getElementById('score').innerHTML = points.toString();
                                 if (currentSpeedIndex < 4) {
                                     theflash.className = 'bad';
                                 }
@@ -340,9 +343,9 @@ function distance(k1, k2) {
 function toggleFullScreen() {
     var doc = window.document;
     var docEl = doc.documentElement;
-    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-    if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+    var requestFullScreen = docEl.requestFullscreen || docEl['mozRequestFullScreen'] || docEl['webkitRequestFullScreen'] || docEl['msRequestFullscreen'];
+    var cancelFullScreen = doc.exitFullscreen || doc['mozCancelFullScreen'] || doc['webkitExitFullscreen'] || doc['msExitFullscreen'];
+    if (!doc['fullscreenElement'] && !doc['mozFullScreenElement'] && !doc['webkitFullscreenElement'] && !doc['msFullscreenElement']) {
         requestFullScreen.call(docEl);
     }
     else {

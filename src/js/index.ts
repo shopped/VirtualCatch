@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import * as posenet from '@tensorflow-models/posenet';
 
-const ballTexture = require('../textures/ball.jpg');
+const ballTexture = require('../ball.jpg');
 const glovePNG = require('../glove.png');
 const glove = new Image();
 glove.src = glovePNG;
@@ -67,7 +67,7 @@ function loadBalls(): void {
     balls.push(createBall());
 }
 
-function getBoundingBox(obj): number[] {
+function getBoundingBox(obj): object[] {
     var bbox = new THREE.Box3().setFromObject(obj);
     var vectormin = new THREE.Vector3();
     var vectormax = new THREE.Vector3();
@@ -97,7 +97,7 @@ const state = {
 }
 
 async function setUpCamera() {
-    const videoElement = document.getElementById('video');
+    const videoElement = <HTMLVideoElement> document.getElementById('video');
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         alert('Error getting access to your webcam webcam.');
     }
@@ -180,15 +180,17 @@ function resetBallInterval(): void {
     document.getElementById('speed').innerHTML = `Pitcher is ${textOptions[currentSpeedIndex]}`;
 }
 
-const canvas = document.getElementById('canvas');
+const canvas = <HTMLCanvasElement> document.getElementById('canvas');
 const outputStride = 16; //8, 16, 32
 
-document.getElementById('video').style.width = window.innerWidth;
-document.getElementById('video').style.height = window.innerHeight;
-document.getElementById('canvas').style.width = window.innerWidth;
-document.getElementById('canvas').width = window.innerWidth;
-document.getElementById('canvas').style.height = window.innerHeight;
-document.getElementById('canvas').height = window.innerHeight;
+document.getElementById('video').style.width = window.innerWidth.toString();
+document.getElementById('video').style.height = window.innerHeight.toString();
+document.getElementById('canvas').style.width = window.innerWidth.toString();
+// @ts-ignore
+document.getElementById('canvas').width = window.innerWidth.toString();
+document.getElementById('canvas').style.height = window.innerHeight.toString();
+// @ts-ignore
+document.getElementById('canvas').height = window.innerHeight.toString();
 
 let flipped = false;
 
@@ -208,6 +210,7 @@ async function animate() {
     if (pose) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         const distanceConstant = 2 * Math.max(distance(pose.keypoints[0], pose.keypoints[1]), distance(pose.keypoints[0], pose.keypoints[2]));
+        // @ts-ignore
         ctx.drawImage(video, 0, 0, window.innerWidth, window.innerHeight);
         if (pose.keypoints[9].confidence < .5) {
             handBBl = null;
@@ -242,13 +245,13 @@ async function animate() {
                 (handBBr && detectCollision(getBoundingBox(b.ballMesh), handBBr))
             ) {
                 points++;
-                document.getElementById('score').innerHTML = points;
+                document.getElementById('score').innerHTML = points.toString();
                 if (currentSpeedIndex < 4) {
                     theflash.className = 'good';
                 }
             } else {
                 points--;
-                document.getElementById('score').innerHTML = points;
+                document.getElementById('score').innerHTML = points.toString();
                 if (currentSpeedIndex < 4) {
                     theflash.className = 'bad';
                 }
@@ -307,10 +310,10 @@ function toggleFullScreen(): void {
     var doc = window.document;
     var docEl = doc.documentElement;
 
-    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+    var requestFullScreen = docEl.requestFullscreen || docEl['mozRequestFullScreen'] || docEl['webkitRequestFullScreen'] || docEl['msRequestFullscreen'];
+    var cancelFullScreen = doc.exitFullscreen || doc['mozCancelFullScreen'] || doc['webkitExitFullscreen'] || doc['msExitFullscreen'];
 
-    if (!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+    if (!doc['fullscreenElement'] && !doc['mozFullScreenElement'] && !doc['webkitFullscreenElement'] && !doc['msFullscreenElement']) {
         requestFullScreen.call(docEl);
     }
     else {
