@@ -2,8 +2,9 @@
 
 I am working on this application because I want to make applications that incentivize exercise. As a developer I work on things that are not always obviously morally good. Improving public health through exercise by making a **free application available on the web** for anyone without any special equipment besides a webcam. Feel free to reach out or submit a pull request if you want to contribute.
 
-![Screenshot Here](https://i.imgur.com/D3YSt4w.jpg "Screenshot. More in the video linked.")
-[Watch a video demo](https://youtu.be/K-d9zZWKDz0)
+![Screenshot Here](https://i.imgur.com/D3YSt4w.jpg "Screenshot. More in the video linked.")  
+[Watch a video demo](https://youtu.be/K-d9zZWKDz0)  
+[PLAY ONLINE](https://shopped.github.io/VirtualCatch/dist/)  
 
 # Technologies Used
 * Tensorflow.js
