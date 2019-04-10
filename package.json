@@ -8,5 +8,9 @@
   },
   "devDependencies": {
     "babel-core": "^6.26.3"
+  },
+  "scripts": {
+    "run": "tsc ./src/js/index.ts && parcel ./src/index.html",
+    "build": "tsc ./src/js/index.ts && parcel build ./src/index.html --public-url ./"
   }
 }
